@@ -1,0 +1,39 @@
+name: Rust
+
+on:
+  push:
+    tags: "release/*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Fetch SDE
+      run: >
+        wget http://eve-static-data-export.s3-eu-west-1.amazonaws.com/tranquility/sde.zip &&
+        wget -O - https://eve-static-data-export.s3-eu-west-1.amazonaws.com/tranquility/checksum | awk '{print $1}' | tee /tmp/checksum &&
+        unzip -p sde.zip | md5sum | awk '{print $1}' | tee /tmp/checksum-actual &&
+        [ "$(cat /tmp/checksum)" = "$(cat /tmp/checksum-actual)" ]
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    
+    - name: Build
+      env:
+        EVE_SDE_ZIP_PATH: sde.zip
+      run: cargo build --verbose --release
+    
+    - name: 'Upload Artifacts'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Ubuntu Binary
+        path: target/release/yaerp
+    

@@ -1,0 +1,19 @@
+[package]
+name = "yaerp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+itertools = "0.12"
+clap = { version = "4.4", features = ["derive"] }
+
+[build-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+anyhow = "1.0"
+zip = "0.6"
+filetime = "0.2"
+rayon = "1.8"
+dotenv = "0.15"
+itertools = "0.12"
