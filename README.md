@@ -7,15 +7,17 @@
 
 This is a CLI command because I didn't feel like making a UI for it. As such, it is likely not useful for people who aren't familiar with command lines.
 
-While the command's `--help` is exhaustive, here is the full help text, followed by a few examples.
+When more than 3 systems are specified, the shortest route is picked. The first and last systems are treated as the start/end systems and will not be changed.
 
-Note that the filtering is unidirectional; excluding a system will allow jumps /out/, but not /in/. Additionally, the route can jump between filtered systems if there is no other option, but these routes are heavily penalized (one filtered jump is effectively a thousand normal jumps in the distance calculation).
+Note that the filtering is unidirectional; excluding a system will allow jumps *out*, but not *in*. Additionally, the route can jump between filtered systems if there is no other option, but these routes are heavily penalized (one filtered jump is effectively a thousand normal jumps in the distance calculation).
 
 A filtered system will never be entered, unless the `--no-filter` flag is added, which will keep the penalty but not remove the jump.
 
-Long flags which accept an argument can be specified several times.
+Long flags that accept an argument can be specified several times.
 
 Arguments which accept a system or region name will first look for the exact match (case sensitive), then do a wildcard search (contains substring - case insensitive). You may need to enter the system name exactly, potentially with double quotes if there's a space in the name. Wildcard searches that have multiple matches will return an error.
+
+While the command's `--help` is exhaustive, here is the full help text, followed by a few examples.
 
 ```
 $ yaerp --help
@@ -59,6 +61,9 @@ Options:
 
       --no-highsec
           Routes will never enter highsec, and will try to get out as soon as possible
+
+      --exact-route
+          The route will be exactly what is given, and no attempt will be made to optimize it
 
   -r, --region-blacklist <REGION_BLACKLIST>
           Routes will never enter this region, and will try to get out as soon as possible
