@@ -46,6 +46,10 @@ struct Args {
     #[arg(long = "no-highsec")]
     no_highsec: bool,
 
+    /// The route will be exactly what is given, and no attempt will be made to optimize it.
+    #[arg(long = "exact-route")]
+    exact_route: bool,
+
     /// Routes will never enter this region, and will try to get out as soon as possible
     #[arg(short = 'r', long = "region-blacklist")]
     region_blacklist: Vec<String>,
@@ -415,12 +419,30 @@ fn main() -> anyhow::Result<()> {
 
     let mut paths = Vec::new();
 
-    for middle in middle.iter().permutations(middle.len()) {
+    let potential_routes = if args.exact_route {
         let mut systems = Vec::new();
 
         systems.push(start);
-        systems.extend(middle.into_iter().copied());
+        systems.extend(middle.into_iter());
         systems.push(end);
+
+        vec![systems]
+    } else {
+        middle.iter()
+            .permutations(middle.len())
+            .map(|middle| {
+                let mut systems = Vec::new();
+        
+                systems.push(start);
+                systems.extend(middle.into_iter().copied());
+                systems.push(end);
+
+                systems
+            })
+            .collect_vec()
+    };
+
+    for systems in potential_routes.into_iter() {
 
         let mut route = Vec::new();
 
